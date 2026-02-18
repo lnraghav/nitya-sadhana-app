@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nitya Sadhana – Japa</title>
 
 <style>
@@ -13,19 +14,25 @@ body {
 }
 
 h1 {
-  font-size: 30px;
-  margin-bottom: 30px;
+  font-size: 28px;
+  margin-bottom: 20px;
 }
 
 #count {
   font-size: 90px;
-  margin: 30px 0;
+  margin: 20px 0;
+}
+
+#target {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 20px;
 }
 
 button {
-  font-size: 20px;
-  padding: 12px 25px;
-  margin: 10px;
+  font-size: 18px;
+  padding: 10px 20px;
+  margin: 8px;
   border-radius: 8px;
   border: none;
   background: #8b6f47;
@@ -44,21 +51,33 @@ button:active {
 <h1>Nitya Sadhana – Japa</h1>
 
 <div id="count">0</div>
+<div id="target">Target: 108</div>
 
 <button onclick="increment()">Tap</button>
 <button onclick="resetCount()">Reset</button>
 
 <br><br>
 
-<button onclick="playTone()">🔔 Play 432 Hz</button>
+<button onclick="playTone()">🔔 Play Tone</button>
+<button onclick="stopTone()">⏹ Stop</button>
+
+<!-- Reliable small tone audio -->
+<audio id="toneAudio" loop>
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_3c62db7b44.mp3?filename=soft-bell-80855.mp3" type="audio/mpeg">
+</audio>
 
 <script>
 
 let count = 0;
+const target = 108;
 
 function increment() {
   count++;
   document.getElementById("count").innerText = count;
+
+  if (count === target) {
+    playTone();
+  }
 }
 
 function resetCount() {
@@ -67,22 +86,14 @@ function resetCount() {
 }
 
 function playTone() {
-  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  const oscillator = audioCtx.createOscillator();
-  const gainNode = audioCtx.createGain();
+  const audio = document.getElementById("toneAudio");
+  audio.play();
+}
 
-  oscillator.type = "sine";
-  oscillator.frequency.value = 432;   // Change to 433 if you prefer
-
-  oscillator.connect(gainNode);
-  gainNode.connect(audioCtx.destination);
-
-  oscillator.start();
-
-  gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-  gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 3);
-
-  oscillator.stop(audioCtx.currentTime + 3);
+function stopTone() {
+  const audio = document.getElementById("toneAudio");
+  audio.pause();
+  audio.currentTime = 0;
 }
 
 </script>
