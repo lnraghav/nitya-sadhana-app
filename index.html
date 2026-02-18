@@ -2,7 +2,6 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nitya Sadhana – Japa</title>
 
 <style>
@@ -15,24 +14,17 @@ body {
 
 h1 {
   font-size: 28px;
-  margin-bottom: 20px;
 }
 
 #count {
-  font-size: 90px;
-  margin: 20px 0;
-}
-
-#target {
-  font-size: 16px;
-  color: #555;
-  margin-bottom: 20px;
+  font-size: 80px;
+  margin: 30px 0;
 }
 
 button {
   font-size: 18px;
-  padding: 10px 20px;
-  margin: 8px;
+  padding: 12px 24px;
+  margin: 10px;
   border-radius: 8px;
   border: none;
   background: #8b6f47;
@@ -43,7 +35,6 @@ button:active {
   background: #6f5736;
 }
 </style>
-
 </head>
 
 <body>
@@ -51,51 +42,91 @@ button:active {
 <h1>Nitya Sadhana – Japa</h1>
 
 <div id="count">0</div>
-<div id="target">Target: 108</div>
+<div>Target: 108</div>
 
-<button onclick="increment()">Tap</button>
+<br>
+
+<button onclick="tap()">Tap</button>
 <button onclick="resetCount()">Reset</button>
 
 <br><br>
 
-<button onclick="playTone()">🔔 Play Tone</button>
-<button onclick="stopTone()">⏹ Stop</button>
-
-<!-- Reliable small tone audio -->
-<audio id="toneAudio" loop>
-  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_3c62db7b44.mp3?filename=soft-bell-80855.mp3" type="audio/mpeg">
-</audio>
+<button onclick="startMantra()">🕉 Play Mantra</button>
+<button onclick="stopMantra()">■ Stop</button>
 
 <script>
-
 let count = 0;
-const target = 108;
+let audioContext = null;
+let mantraOscillator = null;
 
-function increment() {
+// Ensure AudioContext is active (Safari requirement)
+function initAudio() {
+  if (!audioContext) {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioContext.state === "suspended") {
+    audioContext.resume();
+  }
+}
+
+// Bell sound on tap
+function playBell() {
+  initAudio();
+
+  const oscillator = audioContext.createOscillator();
+  const gain = audioContext.createGain();
+
+  oscillator.type = "sine";
+  oscillator.frequency.value = 880;
+
+  gain.gain.setValueAtTime(0.5, audioContext.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.4);
+
+  oscillator.connect(gain);
+  gain.connect(audioContext.destination);
+
+  oscillator.start();
+  oscillator.stop(audioContext.currentTime + 0.4);
+}
+
+// Continuous mantra
+function startMantra() {
+  initAudio();
+
+  if (mantraOscillator) return;
+
+  mantraOscillator = audioContext.createOscillator();
+  const gain = audioContext.createGain();
+
+  mantraOscillator.type = "sine";
+  mantraOscillator.frequency.value = 432;
+
+  gain.gain.value = 0.2;
+
+  mantraOscillator.connect(gain);
+  gain.connect(audioContext.destination);
+
+  mantraOscillator.start();
+}
+
+function stopMantra() {
+  if (mantraOscillator) {
+    mantraOscillator.stop();
+    mantraOscillator = null;
+  }
+}
+
+// Tap function
+function tap() {
   count++;
   document.getElementById("count").innerText = count;
-
-  if (count === target) {
-    playTone();
-  }
+  playBell();
 }
 
 function resetCount() {
   count = 0;
   document.getElementById("count").innerText = count;
 }
-
-function playTone() {
-  const audio = document.getElementById("toneAudio");
-  audio.play();
-}
-
-function stopTone() {
-  const audio = document.getElementById("toneAudio");
-  audio.pause();
-  audio.currentTime = 0;
-}
-
 </script>
 
 </body>
