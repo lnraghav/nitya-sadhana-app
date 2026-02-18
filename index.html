@@ -1,74 +1,91 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Nitya Sadhana – Japa</title>
+<meta charset="UTF-8">
+<title>Nitya Sadhana – Japa</title>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 40px;
-      background-color: #f4f0e6;
-    }
+<style>
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 40px;
+  background-color: #f4f0e6;
+}
 
-    h1 {
-      font-size: 28px;
-    }
+h1 {
+  font-size: 30px;
+  margin-bottom: 30px;
+}
 
-    #count {
-      font-size: 80px;
-      margin: 30px 0;
-    }
+#count {
+  font-size: 90px;
+  margin: 30px 0;
+}
 
-    button {
-      font-size: 20px;
-      padding: 12px 24px;
-      margin: 10px;
-      border-radius: 8px;
-      border: none;
-      background: #8b6f47;
-      color: white;
-      cursor: pointer;
-    }
+button {
+  font-size: 20px;
+  padding: 12px 25px;
+  margin: 10px;
+  border-radius: 8px;
+  border: none;
+  background: #8b6f47;
+  color: white;
+}
 
-    button:active {
-      background: #6f5736;
-    }
-  </style>
+button:active {
+  background: #6f5736;
+}
+</style>
+
 </head>
 
 <body>
 
-  <h1>Nitya Sadhana – Japa</h1>
+<h1>Nitya Sadhana – Japa</h1>
 
-  <div id="count">0</div>
+<div id="count">0</div>
 
-  <button onclick="increment()">Tap</button>
-  <button onclick="resetCount()">Reset</button>
-  <br><br>
-  <button onclick="playMantra()">🔔 Play Mantra</button>
+<button onclick="increment()">Tap</button>
+<button onclick="resetCount()">Reset</button>
 
-  <audio id="mantraAudio" src="om.mp3"></audio>
+<br><br>
 
-  <script>
-    let count = 0;
+<button onclick="playTone()">🔔 Play 432 Hz</button>
 
-    function increment() {
-      count++;
-      document.getElementById("count").innerText = count;
-    }
+<script>
 
-    function resetCount() {
-      count = 0;
-      document.getElementById("count").innerText = count;
-    }
+let count = 0;
 
-    function playMantra() {
-      const audio = document.getElementById("mantraAudio");
-      audio.play();
-    }
-  </script>
+function increment() {
+  count++;
+  document.getElementById("count").innerText = count;
+}
+
+function resetCount() {
+  count = 0;
+  document.getElementById("count").innerText = count;
+}
+
+function playTone() {
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const oscillator = audioCtx.createOscillator();
+  const gainNode = audioCtx.createGain();
+
+  oscillator.type = "sine";
+  oscillator.frequency.value = 432;   // Change to 433 if you prefer
+
+  oscillator.connect(gainNode);
+  gainNode.connect(audioCtx.destination);
+
+  oscillator.start();
+
+  gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+  gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 3);
+
+  oscillator.stop(audioCtx.currentTime + 3);
+}
+
+</script>
 
 </body>
 </html>
