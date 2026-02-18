@@ -1,25 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nitya Sadhana</title>
+  <meta charset="UTF-8">
+  <title>Nitya Sadhana – Japa</title>
 
   <style>
     body {
-      margin: 0;
-      font-family: system-ui, sans-serif;
-      background: #f5f1e8;
+      font-family: Arial, sans-serif;
       text-align: center;
-      padding: 40px 20px;
+      padding: 40px;
+      background-color: #f4f0e6;
     }
 
     h1 {
       font-size: 28px;
-      margin-bottom: 20px;
     }
 
     #count {
-      font-size: 72px;
+      font-size: 80px;
       margin: 30px 0;
     }
 
@@ -31,6 +29,7 @@
       border: none;
       background: #8b6f47;
       color: white;
+      cursor: pointer;
     }
 
     button:active {
@@ -46,7 +45,11 @@
   <div id="count">0</div>
 
   <button onclick="increment()">Tap</button>
-  <button onclick="reset()">Reset</button>
+  <button onclick="resetCount()">Reset</button>
+  <br><br>
+  <button onclick="playMantra()">🔔 Play Mantra</button>
+
+  <audio id="mantraAudio" src="om.mp3"></audio>
 
   <script>
     let count = 0;
@@ -56,9 +59,14 @@
       document.getElementById("count").innerText = count;
     }
 
-    function reset() {
+    function resetCount() {
       count = 0;
       document.getElementById("count").innerText = count;
+    }
+
+    function playMantra() {
+      const audio = document.getElementById("mantraAudio");
+      audio.play();
     }
   </script>
 
